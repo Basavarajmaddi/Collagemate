@@ -1,0 +1,66 @@
+@startuml CollegeMate System Architecture
+
+skinparam componentStyle uml2
+skinparam backgroundColor white
+skinparam roundcorner 20
+
+!define RECTANGLE class
+
+rectangle "Client Side" {
+    [Web Browser] as WB
+    [Audio Interface] as AI
+}
+
+rectangle "Flask Backend Server" {
+    [Flask Application] as FA
+    [Route Handler] as RH
+    [Chat Controller] as CC
+    [Admission Manager] as AM
+    [Meeting Scheduler] as MS
+}
+
+cloud "External Services" {
+    [OpenAI API] as OAI
+    [Edge TTS] as TTS
+}
+
+database "SQLite Database" {
+    [Admissions] as DB1
+    [Student Details] as DB2
+    [Conversations] as DB3
+    [Time Slots] as DB4
+    [Meetings] as DB5
+}
+
+' Client Side connections
+WB --> RH : HTTP Requests
+AI --> WB : Audio I/O
+
+' Route Handler connections
+RH --> CC : Forward Requests
+RH --> AM : Admission Requests
+RH --> MS : Meeting Requests
+
+' Chat Controller connections
+CC --> OAI : AI Queries
+CC --> TTS : Speech Generation
+CC --> DB3 : Store Conversations
+
+' Admission Manager connections
+AM --> DB1 : Manage Admissions
+AM --> DB2 : Store Student Info
+
+' Meeting Scheduler connections
+MS --> DB4 : Check Time Slots
+MS --> DB5 : Manage Meetings
+
+' Data flow
+OAI --> CC : AI Responses
+TTS --> RH : Audio Response
+DB1 --> AM : Admission Data
+DB2 --> AM : Student Data
+DB3 --> CC : Chat History
+DB4 --> MS : Slot Data
+DB5 --> MS : Meeting Data
+
+@enduml 
